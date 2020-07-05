@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: seed
+  namespace: simulation
+data:
+  seed.json: |
+    {
+        "revision": 201200705.1,
+        "host": "",
+        "port": 8080,
+        "path": "/simulate",
+        "pingInterval": 10000,
+        "timeout": 30000,
+        "node": {
+            "nodeAccessor": {
+                "packetSize": 8192,
+                "bufferInterval": 200
+            },
+            "iceServers": [
+                {
+                    "urls": [
+                        "stun:stun.l.google.com:19302",
+                        "stun:stun1.l.google.com:19302"
+                    ]
+                }
+            ],
+            "routing": {
+                "updatePeriod": 500,
+                "forceUpdateTimes": 20
+            },
+            "coordSystem2D": {
+                "type": "sphere",
+                "radius": 1
+            },
+            "modules": {
+                "ps2": {
+                    "type": "pubsub2D",
+                    "channel": 256
+                }
+            }
+        }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seed
+  namespace: simulation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seed
+  template:
+    metadata:
+      labels:
+        app: seed
+    spec:
+      containers:
+      - name: seed
+        image: llamerada/colonio-seed:dev-01
+        command: ["/seed"]
+        args: ["-config", "/etc/seed/seed.json"]
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/seed
+      volumes:
+      - name: config-volume
+        configMap:
+          name: seed
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seed
+  namespace: simulation
+spec:
+  type: ClusterIP
+  ports:
+    - name: "http-port"
+      protocol: "TCP"
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: seed
