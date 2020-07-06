@@ -4,7 +4,7 @@ metadata:
   name: node
   namespace: simulation
 spec:
-  replicas: 20
+  replicas: 3
   selector:
     matchLabels:
       app: node
@@ -18,3 +18,9 @@ spec:
         image: llamerada/colonio-sim-node:dev-00
         command: ["/simulations"]
         args: ["sphere", "--seed-url", "ws://seed.simulation.svc.cluster.local:8080/simulate"]
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "100Mi"
+          requests:
+            cpu: "100m"
