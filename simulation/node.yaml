@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node
+  namespace: simulation
+spec:
+  replicas: 20
+  selector:
+    matchLabels:
+      app: node
+  template:
+    metadata:
+      labels:
+        app: node
+    spec:
+      containers:
+      - name: node
+        image: llamerada/colonio-sim-node:dev-00
+        command: ["/simulations"]
+        args: ["sphere", "--seed-url", "ws://seed.simulation.svc.cluster.local:8080/simulate"]
