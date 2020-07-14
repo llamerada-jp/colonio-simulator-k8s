@@ -35,7 +35,7 @@ spec:
     spec:
       containers:
       - name: node
-        image: llamerada/colonio-sim-node:dev-02
+        image: llamerada/colonio-sim-node:dev-04
         command: ["/simulations"]
         args: ["/etc/node/node.json"]
         resources:
@@ -47,6 +47,7 @@ spec:
         volumeMounts:
         - name: config-volume
           mountPath: /etc/node
+      terminationGracePeriodSeconds: 0
       volumes:
       - name: config-volume
         configMap:
