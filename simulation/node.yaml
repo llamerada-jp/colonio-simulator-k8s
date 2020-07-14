@@ -1,13 +1,21 @@
 apiVersion: v1
-kind: Service
+kind: ConfigMap
 metadata:
   name: node
-  labels:
-    app: node
-spec:
-  clusterIP: None
-  selector:
-    app: node
+  namespace: simulation
+data:
+  node.json: |
+    {
+      "simulation name": "sphere",
+      "mongodb": {
+        "url": "mongodb://simulation:Passw0rd@mongodb.simulation.svc.cluster.local:27017/",
+        "database": "logs",
+        "collection": "sphere"
+      },
+      "seed": {
+        "url": "ws://seed.simulation.svc.cluster.local:8080/simulate"
+      }
+    }
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -27,12 +35,30 @@ spec:
     spec:
       containers:
       - name: node
-        image: llamerada/colonio-sim-node:dev-00
+        image: llamerada/colonio-sim-node:dev-02
         command: ["/simulations"]
-        args: ["sphere", "--seed-url", "ws://seed.simulation.svc.cluster.local:8080/simulate"]
+        args: ["/etc/node/node.json"]
         resources:
           limits:
             cpu: "100m"
             memory: "100Mi"
           requests:
             cpu: "100m"
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/node
+      volumes:
+      - name: config-volume
+        configMap:
+          name: node
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node
+  labels:
+    app: node
+spec:
+  clusterIP: None
+  selector:
+    app: node

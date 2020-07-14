@@ -29,19 +29,20 @@ spec:
         app: mongodb
     spec:
       containers:
-      - env:
+      - name: mongodb
+        image: mongo:4.0.19
+        args: ["--auth"]
+        env:
         - name: MONGO_INITDB_ROOT_USERNAME
-          value: root
-        - name: MONGO_INITDB_ROOT_PASSWORD
-          value: password
-        - name: MONGO_INITDB_DATABASE
           value: simulation
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          value: Passw0rd
+        - name: MONGO_INITDB_DATABASE
+          value: logs
         - name: MONGO_DATA_DIR
           value: /data/db
         - name: MONGO_LOG_DIR
           value: /data/log
-        image: mongo:4.0.19
-        name: mongodb
         volumeMounts:
         - mountPath: /data
           name: data
