@@ -13,6 +13,28 @@ spec:
   storageClassName: local-path
   volumeMode: Filesystem
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: initdb
+  namespace: simulation
+data:
+  mongodb.js: |
+    let res = [
+      db.createCollection('sphere'),
+      db.sphere.createIndex({ message: 1 }),
+      db.sphere.createIndex({ time: 1 }),
+    ]
+
+    printjson(res)
+
+    for (let r of res) {
+      if (r['ok'] !== 1) {
+        print('Error, exiting')
+        quit(1)
+      }
+    }
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -44,9 +66,18 @@ spec:
         - name: MONGO_LOG_DIR
           value: /data/log
         volumeMounts:
+        - mountPath: /home/mongodb
+          name: home
+        - mountPath: /docker-entrypoint-initdb.d
+          name: initdb
         - mountPath: /data
           name: data
       volumes:
+      - name: home
+        emptyDir: {}
+      - name: initdb
+        configMap:
+          name: initdb
       - name: data
         persistentVolumeClaim:
           claimName: local-claim
