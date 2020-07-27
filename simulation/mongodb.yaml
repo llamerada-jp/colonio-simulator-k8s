@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: local-claim
+  name: mongodb-claim
   namespace: simulation
 spec:
   accessModes:
@@ -10,7 +10,8 @@ spec:
     requests:
       storage: 10Gi
   # local-path is a CSI of rancher
-  storageClassName: local-path
+  # topolvm-provisioner is a CSI
+  storageClassName: topolvm-provisioner
   volumeMode: Filesystem
 ---
 apiVersion: v1
@@ -80,7 +81,7 @@ spec:
           name: initdb
       - name: data
         persistentVolumeClaim:
-          claimName: local-claim
+          claimName: mongodb-claim
 ---
 apiVersion: v1
 kind: Service
