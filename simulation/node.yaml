@@ -6,14 +6,14 @@ metadata:
 data:
   node.json: |
     {
-      "simulation name": "sphere",
+      "simulation name": "plane",
       "mongodb": {
         "url": "mongodb://simulation:Passw0rd@mongodb.simulation.svc.cluster.local:27017/",
-        "database": "logs",
-        "collection": "sphere"
+        "database": "simulation",
+        "collection": "logs"
       },
       "seed": {
-        "url": "ws://seed.simulation.svc.cluster.local:8080/simulate"
+        "url": "ws://seed.simulation.svc.cluster.local:8080/simulation"
       }
     }
 ---
@@ -24,7 +24,7 @@ metadata:
   namespace: simulation
 spec:
   serviceName: node
-  replicas: 3
+  replicas: 80
   selector:
     matchLabels:
       app: node
@@ -35,7 +35,7 @@ spec:
     spec:
       containers:
       - name: node
-        image: llamerada/colonio-sim-node:dev-04
+        image: llamerada/colonio-sim-node:dev-11
         command: ["/simulations"]
         args: ["/etc/node/node.json"]
         resources:

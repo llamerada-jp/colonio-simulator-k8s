@@ -9,7 +9,7 @@ data:
         "revision": 201200705.1,
         "host": "",
         "port": 8080,
-        "path": "/simulate",
+        "path": "/simulation",
         "pingInterval": 10000,
         "timeout": 30000,
         "node": {
@@ -30,8 +30,11 @@ data:
                 "forceUpdateTimes": 20
             },
             "coordSystem2D": {
-                "type": "sphere",
-                "radius": 1
+                "type": "plane",
+                "xMin": -1.0,
+                "xMax": 1.0,
+                "yMin": -1.0,
+                "yMax": 1.0
             },
             "modules": {
                 "ps2": {
@@ -59,7 +62,7 @@ spec:
     spec:
       containers:
       - name: seed
-        image: llamerada/colonio-seed:dev-01
+        image: llamerada/colonio-seed:dev-02
         command: ["/seed"]
         args: ["-config", "/etc/seed/seed.json"]
         resources:
