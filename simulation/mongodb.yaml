@@ -75,7 +75,10 @@ spec:
           name: data
       volumes:
       - name: home
-        emptyDir: {}
+        csi:
+          driver: topolvm.cybozu.com
+          volumeAttributes:
+            topolvm.cybozu.com/size: "4"
       - name: initdb
         configMap:
           name: initdb
