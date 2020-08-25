@@ -14,7 +14,14 @@ data:
       },
       "seed": {
         "url": "ws://seed.simulation.svc.cluster.local:8080/simulation"
-      }
+      },
+      "logs": [
+        "current position",
+        "links",
+        "routing 1d required",
+        "routing 2d required",
+        "link status"
+      ]
     }
 ---
 apiVersion: apps/v1
@@ -24,7 +31,7 @@ metadata:
   namespace: simulation
 spec:
   serviceName: node
-  replicas: 80
+  replicas: 12
   selector:
     matchLabels:
       app: node
@@ -35,15 +42,15 @@ spec:
     spec:
       containers:
       - name: node
-        image: llamerada/colonio-sim-node:dev-11
+        image: llamerada/colonio-sim-node:dev-16
         command: ["/simulations"]
-        args: ["/etc/node/node.json"]
+        args: ["-m", "-p", "8", "/etc/node/node.json"]
         resources:
           limits:
-            cpu: "100m"
+            cpu: "500m"
             memory: "100Mi"
           requests:
-            cpu: "100m"
+            cpu: "500m"
         volumeMounts:
         - name: config-volume
           mountPath: /etc/node
