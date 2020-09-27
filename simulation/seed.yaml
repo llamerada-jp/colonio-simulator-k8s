@@ -30,11 +30,8 @@ data:
                 "forceUpdateTimes": 20
             },
             "coordSystem2D": {
-                "type": "plane",
-                "xMin": -1.0,
-                "xMax": 1.0,
-                "yMin": -1.0,
-                "yMax": 1.0
+                "type": "sphere",
+                "radius": 1.0
             },
             "modules": {
                 "ps2": {
@@ -62,7 +59,7 @@ spec:
     spec:
       containers:
       - name: seed
-        image: llamerada/colonio-seed:dev-02
+        image: llamerada/colonio-seed:dev-04
         command: ["/seed"]
         args: ["-config", "/etc/seed/seed.json"]
         resources:

@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: initdb
+  namespace: simulation
+data:
+  mongodb.js: |
+    let res = [
+      db.createCollection('logs'),
+      db.logs.createIndex({ message: 1 }),
+      db.logs.createIndex({ time: 1 }),
+    ]
+
+    printjson(res)
+
+    for (let r of res) {
+      if (r['ok'] !== 1) {
+        print('Error, exiting')
+        quit(1)
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+  namespace: simulation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:4.0.19
+        args: ["--auth"]
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: simulation
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          value: Passw0rd
+        - name: MONGO_INITDB_DATABASE
+          value: simulation
+        - name: MONGO_DATA_DIR
+          value: /data/db
+        - name: MONGO_LOG_DIR
+          value: /data/log
+        resources:
+          limits:
+            cpu: "3000m"
+            memory: "1024Mi"
+          requests:
+            cpu: "3000m"
+        volumeMounts:
+        - mountPath: /docker-entrypoint-initdb.d
+          name: initdb
+      volumes:
+      - name: initdb
+        configMap:
+          name: initdb
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  namespace: simulation
+spec:
+  ports:
+  - name: mongodb-port
+    port: 27017
+    protocol: TCP
+    targetPort: 27017
+  selector:
+    app: mongodb
+  type: ClusterIP

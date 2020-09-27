@@ -6,7 +6,7 @@ metadata:
 data:
   node.json: |
     {
-      "simulation name": "plane",
+      "simulation name": "sphere",
       "mongodb": {
         "url": "mongodb://simulation:Passw0rd@mongodb.simulation.svc.cluster.local:27017/",
         "database": "simulation",
@@ -31,7 +31,7 @@ metadata:
   namespace: simulation
 spec:
   serviceName: node
-  replicas: 12
+  replicas: 220
   selector:
     matchLabels:
       app: node
@@ -42,15 +42,15 @@ spec:
     spec:
       containers:
       - name: node
-        image: llamerada/colonio-sim-node:dev-16
+        image: llamerada/colonio-sim-node:dev-37
         command: ["/simulations"]
-        args: ["-m", "-p", "8", "/etc/node/node.json"]
+        args: ["-m", "-p", "5", "/etc/node/node.json"]
         resources:
           limits:
-            cpu: "500m"
-            memory: "100Mi"
+            cpu: "450m"
+            memory: "256Mi"
           requests:
-            cpu: "500m"
+            cpu: "450m"
         volumeMounts:
         - name: config-volume
           mountPath: /etc/node
