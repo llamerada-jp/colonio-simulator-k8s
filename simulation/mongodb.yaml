@@ -11,7 +11,7 @@ spec:
       storage: 10Gi
   # local-path is a CSI of rancher
   # topolvm-provisioner is a CSI
-  storageClassName: topolvm-provisioner
+  storageClassName: local-path
   volumeMode: Filesystem
 ---
 apiVersion: v1
@@ -75,10 +75,14 @@ spec:
           name: data
       volumes:
       - name: home
-        csi:
-          driver: topolvm.cybozu.com
-          volumeAttributes:
-            topolvm.cybozu.com/size: "4"
+        ephemeral:
+          volumeClaimTemplate:
+            spec:
+              accessModes: [ "ReadWriteOnce" ]
+              storageClassName: local-path
+              resources:
+                requests:
+                  storage: 5Gi
       - name: initdb
         configMap:
           name: initdb
@@ -97,6 +101,7 @@ spec:
     port: 27017
     protocol: TCP
     targetPort: 27017
+    nodePort: 30017
   selector:
     app: mongodb
-  type: ClusterIP
+  type: NodePort

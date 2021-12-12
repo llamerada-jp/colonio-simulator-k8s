@@ -31,7 +31,7 @@ metadata:
   namespace: simulation
 spec:
   serviceName: node
-  replicas: 220
+  replicas: 24
   selector:
     matchLabels:
       app: node
@@ -42,15 +42,9 @@ spec:
     spec:
       containers:
       - name: node
-        image: llamerada/colonio-sim-node:dev-37
+        image: llamerada/colonio-sim-node:dev
         command: ["/simulations"]
-        args: ["-m", "-p", "5", "/etc/node/node.json"]
-        resources:
-          limits:
-            cpu: "450m"
-            memory: "256Mi"
-          requests:
-            cpu: "450m"
+        args: ["-m", "-p", "12", "/etc/node/node.json"]
         volumeMounts:
         - name: config-volume
           mountPath: /etc/node

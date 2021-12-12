@@ -59,9 +59,9 @@ spec:
     spec:
       containers:
       - name: seed
-        image: llamerada/colonio-seed:dev-04
+        image: llamerada/colonio-seed:dev-05
         command: ["/seed"]
-        args: ["-config", "/etc/seed/seed.json"]
+        args: ["--config", "/etc/seed/seed.json", --logtostderr]
         resources:
           limits:
             cpu: "100m"
